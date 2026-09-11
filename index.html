@@ -15,6 +15,8 @@
             --text-color: #333333;
             --border-color: #dddddd;
             --success-color: #28a745;
+            --badge-yellow: #f1c40f;
+            --badge-green: #27ae60;
         }
 
         body {
@@ -44,7 +46,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 850px;
             margin: 2rem auto;
             background: var(--card-bg);
             padding: 2rem;
@@ -196,7 +198,7 @@
             background-color: #5a6268;
         }
 
-        /* Ergebnis-Layout Styles */
+        /* Ergebnis-Sektionen */
         .result-section {
             background: #f8f9fa;
             border: 1px solid var(--border-color);
@@ -220,10 +222,15 @@
             margin-top: 0.3rem;
         }
 
-        /* Produkte nebeneinander */
+        /* Steuerung von Elementen, die nur im PDF/Druck sichtbar sein sollen */
+        .print-only {
+            display: none;
+        }
+
+        /* Shop-Ähnliches Produkt-Grid */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 1rem;
             margin-top: 0.8rem;
         }
@@ -231,21 +238,69 @@
         .product-card {
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 1rem;
             text-align: center;
+            position: relative;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: #000;
+            text-transform: uppercase;
+        }
+
+        .badge-bestseller {
+            background-color: var(--badge-yellow);
+        }
+
+        .badge-stock {
+            background-color: var(--badge-green);
+            color: white;
+        }
+
+        .product-card img {
+            width: 100px;
+            height: 120px;
+            object-fit: contain;
+            margin: 1.5rem auto 0.5rem auto;
         }
 
         .product-card h4 {
-            margin: 0 0 0.5rem 0;
-            font-size: 0.95rem;
-            color: var(--text-color);
+            margin: 0.5rem 0 0.2rem 0;
+            font-size: 0.9rem;
+            color: #444;
+            font-weight: normal;
         }
 
-        .product-card p {
-            font-size: 0.85rem;
-            color: #555;
+        .product-title-main {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            min-height: 2.4em;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 0.5rem 0 0.1rem 0;
+        }
+
+        .product-unit-price {
+            font-size: 0.75rem;
+            color: #666;
             margin-bottom: 0.8rem;
         }
 
@@ -254,9 +309,10 @@
             background-color: var(--primary-color);
             color: white;
             text-decoration: none;
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
             font-size: 0.85rem;
+            font-weight: 600;
         }
 
         .product-card a:hover {
@@ -274,7 +330,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Druckoptimierung / PDF Layout Container */
         #pdfContent {
             background: white;
             padding: 0.5rem;
@@ -300,7 +355,7 @@
         <form id="finderForm">
             
             <!-- SCHRITT 1: Volumen & Rechner -->
-            <div class="step active" id="step-1">
+            <div class="step" id="step-1">
                 <h2>Schritt 1: Beckenvolumen & Maße</h2>
                 
                 <label for="volume">Wasservolumen direkt eingeben (in m³):</label>
@@ -366,16 +421,9 @@
             </div>
 
             <!-- SCHRITT 3: Problem & Wasserwerte -->
-            <div class="step" id="step-3">
+            <div class="step active" id="step-3">
                 <h2>Schritt 3: Problem & Wasserwerte</h2>
                 
-                <label>Aktuelles Problem:</label>
-                <div class="checkbox-group" id="problemCheckboxGroup">
-                    <label><input type="checkbox" name="problem" value="gruen" data-text="Wasser ist grün / Algen"> Wasser ist grün / Algen</label>
-                    <label><input type="checkbox" name="problem" value="trueb" data-text="Wasser ist trüb / milchig"> Wasser ist trüb / milchig</label>
-                    <label><input type="checkbox" name="problem" value="rand" data-text="Gelber/schmieriger Rand an der Wasserlinie"> Gelber/schmieriger Rand an der Wasserlinie</label>
-                </div>
-
                 <label for="disinfectionMethod">Desinfektionsart:</label>
                 <select id="disinfectionMethod" onchange="updateParameterFields()">
                     <option value="chlor">Chlor</option>
@@ -383,6 +431,13 @@
                     <option value="aktivsauerstoff">Aktivsauerstoff</option>
                     <option value="brom">Brom</option>
                 </select>
+
+                <label>Aktuelles Problem:</label>
+                <div class="checkbox-group" id="problemCheckboxGroup">
+                    <label><input type="checkbox" name="problem" value="gruen" data-text="Wasser ist grün / Algen"> Wasser ist grün / Algen</label>
+                    <label><input type="checkbox" name="problem" value="trueb" data-text="Wasser ist trüb / milchig"> Wasser ist trüb / milchig</label>
+                    <label><input type="checkbox" name="problem" value="rand" data-text="Gelber/schmieriger Rand an der Wasserlinie"> Gelber/schmieriger Rand an der Wasserlinie</label>
+                </div>
 
                 <!-- Dynamischer Container für die passenden Parameter -->
                 <div id="parameterContainer"></div>
@@ -400,10 +455,86 @@
             <div class="step" id="step-4">
                 <h2>Schritt 4: Ihre KI-Handlungsempfehlung</h2>
                 
-                <!-- Dieser Bereich wird komplett für den PDF-Export & Druck verwendet -->
                 <div id="pdfContent">
-                    <div id="aiResult">
-                        <p><strong>Analyse läuft...</strong> Die KI berechnet die optimalen Schritte für Ihren Pool.</p>
+                    <!-- Wird nur im PDF / Druck angezeigt -->
+                    <div class="print-only" style="margin-bottom: 1.5rem; border-bottom: 2px solid #0056b3; padding-bottom: 0.5rem;">
+                        <h3 style="margin:0; color: #0056b3;">Support-Anfrage Vorlage & Analyse</h3>
+                        <p style="font-size:0.85rem; color:#666; margin:0.2rem 0 0 0;">Diese Daten sind im PDF enthalten und können an den Kundenservice gemailt werden.</p>
+                    </div>
+
+                    <div class="print-only result-section" style="background: #fff; font-size: 0.9rem;">
+                        <h3>Ihre Pool-Parameter im Überblick</h3>
+                        <p><strong>Wasservolumen:</strong> <span id="pdf-vol"></span> m³ | <strong>Standort:</strong> <span id="pdf-loc"></span></p>
+                        <p><strong>Filterung:</strong> <span id="pdf-filt"></span> | <strong>Abdeckung:</strong> <span id="pdf-cov"></span> | <strong>Desinfektion:</strong> <span id="pdf-meth"></span></p>
+                        <p><strong>Gemessener pH-Wert:</strong> <span id="pdf-ph"></span></p>
+                    </div>
+
+                    <!-- Ab hier beginnt die normale Ansicht direkt mit Punkt 1 -->
+                    <div class="result-section">
+                        <h3>1. Problembenennung</h3>
+                        <p><strong>Erkanntes Problem:</strong> <span id="res-problem"></span></p>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>2. Erforderliche Maßnahme & Dosierung</h3>
+                        <p>Um den pH-Wert zu korrigieren und das Wasser zu klären, wird pH-Minus Granulat benötigt.</p>
+                        <p><strong>Empfohlene Menge:</strong> ca. <strong id="res-dosage"></strong></p>
+                        <div class="manufacturer-hint">* Hinweis: Bitte beachten Sie unbedingt auch die genauen Dosierungsangaben und Anwendungshinweise auf dem Produktetikett des Herstellers, da Wassertemperaturen und Ausgangswerte variieren können.</div>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>3. Passende Produkte für Ihr Problem</h3>
+                        <div class="product-grid">
+                            <div class="product-card">
+                                <span class="product-badge badge-bestseller">Bestseller</span>
+                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="pH-Minus Granulat">
+                                <div>
+                                    <h4>MYPOOL</h4>
+                                    <div class="product-title-main">pH-Minus Granulat | 1,0 kg</div>
+                                </div>
+                                <div>
+                                    <div class="product-price">8,50 € *</div>
+                                    <div class="product-unit-price">8,50 € pro 1 kg</div>
+                                    <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <span class="product-badge badge-stock">Auf Lager</span>
+                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="Chlor Granulat">
+                                <div>
+                                    <h4>MYPOOL</h4>
+                                    <div class="product-title-main">Chlor Granulat SUPER PERLIERT | 1,0 kg</div>
+                                </div>
+                                <div>
+                                    <div class="product-price">8,95 € *</div>
+                                    <div class="product-unit-price">8,95 € pro 1 kg</div>
+                                    <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <span class="product-badge badge-bestseller">Bestseller</span>
+                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="Algizid">
+                                <div>
+                                    <h4>CRISTAL</h4>
+                                    <div class="product-title-main">Flüssig-Algizid Aktivator | 1,0 l</div>
+                                </div>
+                                <div>
+                                    <div class="product-price">6,95 € *</div>
+                                    <div class="product-unit-price">6,95 € pro 1 l</div>
+                                    <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>4. Schritt-für-Schritt-Anleitung (Anwendung)</h3>
+                        <ol class="guide-steps">
+                            <li><strong>Filteranlage ausschalten:</strong> Schalten Sie Ihre Pumpe/Filteranlage komplett aus, bevor Sie mit der Chemikaliendosierung beginnen.</li>
+                            <li><strong>Granulat in einem Eimer auflösen:</strong> Nehmen Sie einen sauberen Eimer mit lauwarmem Wasser und lösen Sie die berechnete Menge (ca. <span id="res-dosage-step"></span>) darin unter Rühren vollständig auf.</li>
+                            <li><strong>Gleichmäßig ins Wasser einbringen:</strong> Gießen Sie die gelöste Mischung langsam und gleichmäßig entlang des Beckenrandes in den Pool (nicht direkt auf die Einlaufdüsen oder den Boden).</li>
+                            <li><strong>Filteranlage starten:</strong> Schalten Sie die Filteranlage wieder ein und lassen Sie diese nun für mindestens 4 bis 6 Stunden durchgehend laufen, damit sich das Mittel optimal im Poolwasser verteilt.</li>
+                        </ol>
                     </div>
                 </div>
 
@@ -542,7 +673,6 @@
         function analyzeData() {
             nextStep(4);
             
-            // Formulardaten einsammeln
             let volume = document.getElementById('volume').value || '20';
             let location = document.getElementById('locationType').value;
             let environment = document.getElementById('environment').value;
@@ -551,83 +681,27 @@
             let method = document.getElementById('disinfectionMethod').value;
             let ph = document.getElementById('val-ph') ? document.getElementById('val-ph').value || '7.5' : '7.5';
 
-            // Probleme auslesen
             let selectedProblems = [];
             document.querySelectorAll('input[name="problem"]:checked').forEach(cb => {
                 selectedProblems.push(cb.getAttribute('data-text'));
             });
             let problemText = selectedProblems.length > 0 ? selectedProblems.join(', ') : 'Kein spezifisches Problem ausgewählt (Allgemeine Pflege)';
+            let dosageValue = (volume * 10).toFixed(0) + 'g';
 
-            let envText = environment === 'baeume' ? 'In der Nähe von Bäumen/Büschen' : 'Freistehend';
+            // Werte in PDF-Felder einfügen
+            document.getElementById('pdf-vol').innerText = volume;
+            document.getElementById('pdf-loc').innerText = location + (environment === 'baeume' ? ' (In der Nähe von Bäumen)' : ' (Freistehend)');
+            document.getElementById('pdf-filt').innerText = filter;
+            document.getElementById('pdf-cov').innerText = cover;
+            document.getElementById('pdf-meth').innerText = method.toUpperCase();
+            document.getElementById('pdf-ph').innerText = ph;
 
-            let resultHTML = `
-                <div style="border-bottom: 2px solid #0056b3; margin-bottom: 1rem; padding-bottom: 0.5rem;">
-                    <h3 style="margin:0; color: #0056b3;">Support-Anfrage Vorlage & Analyse</h3>
-                    <p style="font-size:0.85rem; color:#666; margin:0.2rem 0 0 0;">Diese Daten sind im PDF enthalten und können an den Kundenservice gemailt werden.</p>
-                </div>
-
-                <!-- 1. Zuvor eingegebene Formulardaten (Übersicht) -->
-                <div class="result-section" style="background: #fff; font-size: 0.9rem;">
-                    <h3>Ihre Pool-Parameter im Überblick</h3>
-                    <p><strong>Wasservolumen:</strong> ${volume} m³ | <strong>Standort:</strong> ${location} (${envText})</p>
-                    <p><strong>Filterung:</strong> ${filter} | <strong>Abdeckung:</strong> ${cover} | <strong>Desinfektion:</strong> ${method.toUpperCase()}</p>
-                    <p><strong>Gemessener pH-Wert:</strong> ${ph}</p>
-                </div>
-
-                <!-- 2. Problembenennung -->
-                <div class="result-section">
-                    <h3>1. Problembenennung</h3>
-                    <p><strong>Erkanntes Problem:</strong> ${problemText}</p>
-                </div>
-
-                <!-- 3. Maßnahme & Dosierungsangabe mit * Herstellerhinweis -->
-                <div class="result-section">
-                    <h3>2. Erforderliche Maßnahme & Dosierung</h3>
-                    <p>Um den pH-Wert zu korrigieren und das Wasser zu klären, wird pH-Minus Granulat benötigt.</p>
-                    <p><strong>Empfohlene Menge:</strong> ca. <strong>${(volume * 10).toFixed(0)}g</strong></p>
-                    <div class="manufacturer-hint">* Hinweis: Bitte beachten Sie unbedingt auch die genauen Dosierungsangaben und Anwendungshinweise auf dem Produktetikett des Herstellers, da Wassertemperaturen und Ausgangswerte variieren können.</div>
-                </div>
-
-                <!-- 4. Produkte nebeneinander aufgelistet -->
-                <div class="result-section">
-                    <h3>3. Passende Produkte für Ihr Problem</h3>
-                    <div class="product-grid">
-                        <div class="product-card">
-                            <h4>pH-Minus Granulat 1kg</h4>
-                            <p>Senkt den pH-Wert zuverlässig im ${volume}m³ Pool.</p>
-                            <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
-                        </div>
-                        <div class="product-card">
-                            <h4>Schockchlorung / Tabs</h4>
-                            <p>Beseitigt Algen und Trübungen schnell & nachhaltig.</p>
-                            <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
-                        </div>
-                        <div class="product-card">
-                            <h4>Flüssig-Algizid</h4>
-                            <p>Verhindert zuverlässig neuen Algenwuchs.</p>
-                            <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. Schritt-für-Schritt Anleitung (Idiotensicher) -->
-                <div class="result-section">
-                    <h3>4. Schritt-für-Schritt-Anleitung (Anwendung)</h3>
-                    <ol class="guide-steps">
-                        <li><strong>Filteranlage ausschalten:</strong> Schalten Sie Ihre Pumpe/Filteranlage komplett aus, bevor Sie mit der Chemikaliendosierung beginnen.</li>
-                        <li><strong>Granulat in einem Eimer auflösen:</strong> Nehmen Sie einen sauberen Eimer mit lauwarmem Wasser und lösen Sie die berechnete Menge (ca. ${(volume * 10).toFixed(0)}g) darin unter Rühren vollständig auf.</li>
-                        <li><strong>Gleichmäßig ins Wasser einbringen:</strong> Gießen Sie die gelöste Mischung langsam und gleichmäßig entlang des Beckenrandes in den Pool (nicht direkt auf die Einlaufdüsen oder den Boden).</li>
-                        <li><strong>Filteranlage starten:</strong> Schalten Sie die Filteranlage wieder ein und lassen Sie diese nun für mindestens 4 bis 6 Stunden durchgehend laufen, damit sich das Mittel optimal im ${volume}m³ Wasser verteilt.</li>
-                    </ol>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                document.getElementById('aiResult').innerHTML = resultHTML;
-            }, 500);
+            // Werte in die direkte Ansicht (ab Punkt 1) einfügen
+            document.getElementById('res-problem').innerText = problemText;
+            document.getElementById('res-dosage').innerText = dosageValue;
+            document.getElementById('res-dosage-step').innerText = dosageValue;
         }
 
-        // PDF-Export Funktion mit html2pdf
         function downloadPDF() {
             const element = document.getElementById('pdfContent');
             const opt = {
