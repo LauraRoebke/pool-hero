@@ -1,416 +1,327 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pool- & Problem-Finder | POOL Total</title>
-    <!-- html2pdf Bibliothek für echten PDF-Export mit Formulardaten -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+:root {
+    --primary-color: #0056b3;
+    --secondary-color: #0088cc;
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --border-color: #dddddd;
+    --success-color: #28a745;
+    --badge-yellow: #f1c40f;
+    --badge-green: #27ae60;
+}
 
-    <header>
-        <h1>POOL- & PROBLEM-FINDER</h1>
-        <p>Sofortige Hilfe für klares Wasser und saubere Ränder</p>
-    </header>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
 
-    <div class="container">
-        <!-- Klickbare Timeline-Leiste (jetzt 5 Schritte) -->
-        <div class="timeline">
-            <div class="timeline-step active" id="dot-1" onclick="nextStep(1)" title="Volumen & Maße">1</div>
-            <div class="timeline-step" id="dot-2" onclick="nextStep(2)" title="Ausrüstung & Standort">2</div>
-            <div class="timeline-step" id="dot-3" onclick="nextStep(3)" title="Wasserwerte">3</div>
-            <div class="timeline-step" id="dot-4" onclick="nextStep(4)" title="Problem & Foto">4</div>
-            <div class="timeline-step" id="dot-5" onclick="nextStep(5)" title="KI-Ergebnis">5</div>
-        </div>
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
 
-        <form id="finderForm">
-            
-            <!-- SCHRITT 1: Volumen & Rechner -->
-            <div class="step active" id="step-1">
-                <h2>Schritt 1: Beckenvolumen & Maße</h2>
-                
-                <label for="volume">Wasservolumen direkt eingeben (in m³):</label>
-                <input type="number" id="volume" placeholder="z. B. 20">
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
 
-                <div class="calc-box">
-                    <h3>Volumen berechnen lassen:</h3>
-                    
-                    <label for="poolShape">Beckenform:</label>
-                    <select id="poolShape" onchange="updateCalcFields()">
-                        <option value="rechteckig">Rechteckpool</option>
-                        <option value="rund">Rundpool</option>
-                        <option value="oval">Ovalpool</option>
-                        <option value="achtform">Achtformpool</option>
-                    </select>
+header p {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
 
-                    <div id="fieldsContainer"></div>
+.container {
+    max-width: 850px;
+    margin: 2rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
 
-                    <button type="button" class="secondary" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="calculateVolume()">Volumen berechnen & übernehmen</button>
-                </div>
+/* Timeline / Stepper Leiste */
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
 
-                <div class="btn-container">
-                    <span></span>
-                    <button type="button" onclick="nextStep(2)">Weiter</button>
-                </div>
-            </div>
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    right: 10px;
+    height: 3px;
+    background-color: var(--border-color);
+    transform: translateY(-50%);
+    z-index: 1;
+}
 
-            <!-- SCHRITT 2: Ausrüstung & Standort -->
-            <div class="step" id="step-2">
-                <h2>Schritt 2: Ausrüstung & Standort</h2>
-                
-                <label for="locationType">Standort (Indoor / Outdoor):</label>
-                <select id="locationType">
-                    <option value="outdoor">Outdoor (im Freien)</option>
-                    <option value="indoor">Indoor (Hallenbad / Überdacht)</option>
-                </select>
+.timeline-step {
+    position: relative;
+    z-index: 2;
+    background-color: white;
+    border: 2px solid var(--border-color);
+    color: var(--border-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-                <label for="environment">Umgebung / Bewuchs:</label>
-                <select id="environment">
-                    <option value="frei">Freistehend / Keine Bäume in der Nähe</option>
-                    <option value="baeume">In der Nähe von Bäumen / Büschen (Laub & Blütenstaub)</option>
-                </select>
+.timeline-step.active {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: white;
+}
 
-                <label for="filter">Filterung:</label>
-                <select id="filter">
-                    <option value="sand">Sandfilter</option>
-                    <option value="glas">Filterglas</option>
-                    <option value="kartusche">Kartuschenfilter</option>
-                </select>
+.timeline-step.completed {
+    border-color: var(--success-color);
+    background-color: var(--success-color);
+    color: white;
+}
 
-                <label for="cover">Schutz / Abdeckung:</label>
-                <select id="cover">
-                    <option value="keine">Keine</option>
-                    <option value="sommerfolie">Sommerfolie / Solarfolie</option>
-                    <option value="winterabdeckung">Feste Abdeckung</option>
-                    <option value="ueberdachung">Überdachung</option>
-                </select>
+.step {
+    display: none;
+}
 
-                <div class="btn-container">
-                    <button type="button" class="secondary" onclick="nextStep(1)">Zurück</button>
-                    <button type="button" onclick="nextStep(3)">Weiter</button>
-                </div>
-            </div>
+.step.active {
+    display: block;
+}
 
-            <!-- SCHRITT 3: Nur Wasserwerte -->
-            <div class="step" id="step-3">
-                <h2>Schritt 3: Wasserwerte & Desinfektion</h2>
-                
-                <label for="disinfectionMethod">Desinfektionsart:</label>
-                <select id="disinfectionMethod" onchange="updateParameterFields()">
-                    <option value="chlor">Chlor</option>
-                    <option value="salz">Salz / Elektrolyse</option>
-                    <option value="aktivsauerstoff">Aktivsauerstoff</option>
-                    <option value="brom">Brom</option>
-                </select>
+h2 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-top: 0;
+    border-bottom: 2px solid var(--bg-color);
+    padding-bottom: 0.5rem;
+}
 
-                <!-- Dynamischer Container für die passenden Parameter -->
-                <div id="parameterContainer"></div>
+label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
 
-                <div class="btn-container">
-                    <button type="button" class="secondary" onclick="nextStep(2)">Zurück</button>
-                    <button type="button" onclick="nextStep(4)">Weiter</button>
-                </div>
-            </div>
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
 
-            <!-- SCHRITT 4: Problem, vorgegebene Antworten, Freifeld & Bild -->
-            <div class="step" id="step-4">
-                <h2>Schritt 4: Problembeschreibung & Foto</h2>
-                
-                <label>Aktuelles Problem (Vorgegebene Auswahl):</label>
-                <div class="checkbox-group" id="problemCheckboxGroup">
-                    <label><input type="checkbox" name="problem" value="gruen" data-text="Wasser ist grün / Algen"> Wasser ist grün / Algen</label>
-                    <label><input type="checkbox" name="problem" value="trueb" data-text="Wasser ist trüb / milchig"> Wasser ist trüb / milchig</label>
-                    <label><input type="checkbox" name="problem" value="rand" data-text="Gelber/schmieriger Rand an der Wasserlinie"> Gelber/schmieriger Rand an der Wasserlinie</label>
-                </div>
+.calc-box {
+    background: #f8f9fa;
+    border: 1px dashed var(--primary-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
 
-                <label for="customProblemText" style="margin-top: 1.5rem;">Zusätzliche Beschreibung / Freifeld:</label>
-                <textarea id="customProblemText" rows="3" placeholder="Beschreiben Sie hier Ihr Problem genauer (z.B. riecht nach Chlor, Pumpe brummt etc.)..."></textarea>
+.calc-box h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
 
-                <label for="imageUpload" style="margin-top: 1.5rem;">Optional: Foto des Poolwassers / des Problems hochladen</label>
-                <input type="file" id="imageUpload" accept="image/*">
+.checkbox-group {
+    margin-top: 0.5rem;
+}
 
-                <div class="btn-container">
-                    <button type="button" class="secondary" onclick="nextStep(3)">Zurück</button>
-                    <button type="button" onclick="analyzeData()">KI-Analyse starten</button>
-                </div>
-            </div>
+.checkbox-group label {
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+    cursor: pointer;
+}
 
-            <!-- SCHRITT 5: Ergebnis -->
-            <div class="step" id="step-5">
-                <h2>Schritt 5: Ihre KI-Handlungsempfehlung</h2>
-                
-                <div id="pdfContent">
-                    <!-- Wird nur im PDF / Druck angezeigt -->
-                    <div class="print-only" style="margin-bottom: 1.5rem; border-bottom: 2px solid #0056b3; padding-bottom: 0.5rem;">
-                        <h3 style="margin:0; color: #0056b3;">Support-Anfrage Vorlage & Analyse</h3>
-                        <p style="font-size:0.85rem; color:#666; margin:0.2rem 0 0 0;">Diese Daten sind im PDF enthalten und können an den Kundenservice gemailt werden.</p>
-                    </div>
+.btn-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
 
-                    <div class="print-only result-section" style="background: #fff; font-size: 0.9rem;">
-                        <h3>Ihre Pool-Parameter im Überblick</h3>
-                        <p><strong>Wasservolumen:</strong> <span id="pdf-vol"></span> m³ | <strong>Standort:</strong> <span id="pdf-loc"></span></p>
-                        <p><strong>Filterung:</strong> <span id="pdf-filt"></span> | <strong>Abdeckung:</strong> <span id="pdf-cov"></span> | <strong>Desinfektion:</strong> <span id="pdf-meth"></span></p>
-                        <p><strong>Gemessener pH-Wert:</strong> <span id="pdf-ph"></span></p>
-                    </div>
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
 
-                    <!-- Ab hier beginnt die normale Ansicht direkt mit Punkt 1 -->
-                    <div class="result-section">
-                        <h3>1. Problembenennung</h3>
-                        <p><strong>Erkanntes Problem:</strong> <span id="res-problem"></span></p>
-                        <p id="res-custom-wrapper" style="margin-top: 0.5rem; display: none;"><strong>Zusätzliche Notiz:</strong> <span id="res-custom"></span></p>
-                    </div>
+button:hover {
+    background-color: var(--secondary-color);
+}
 
-                    <div class="result-section">
-                        <h3>2. Erforderliche Maßnahme & Dosierung</h3>
-                        <p>Um den pH-Wert zu korrigieren und das Wasser zu klären, wird pH-Minus Granulat benötigt.</p>
-                        <p><strong>Empfohlene Menge:</strong> ca. <strong id="res-dosage"></strong></p>
-                        <div class="manufacturer-hint">* Hinweis: Bitte beachten Sie unbedingt auch die genauen Dosierungsangaben und Anwendungshinweise auf dem Produktetikett des Herstellers, da Wassertemperaturen und Ausgangswerte variieren können.</div>
-                    </div>
+button.secondary {
+    background-color: #6c757d;
+}
 
-                    <div class="result-section">
-                        <h3>3. Passende Produkte für Ihr Problem</h3>
-                        <div class="product-grid">
-                            <div class="product-card">
-                                <span class="product-badge badge-bestseller">Bestseller</span>
-                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="pH-Minus Granulat">
-                                <div>
-                                    <h4>MYPOOL</h4>
-                                    <div class="product-title-main">pH-Minus Granulat | 1,0 kg</div>
-                                </div>
-                                <div>
-                                    <div class="product-price">8,50 € *</div>
-                                    <div class="product-unit-price">8,50 € pro 1 kg</div>
-                                    <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
-                                </div>
-                            </div>
-                            <div class="product-card">
-                                <span class="product-badge badge-stock">Auf Lager</span>
-                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="Chlor Granulat">
-                                <div>
-                                    <h4>MYPOOL</h4>
-                                    <div class="product-title-main">Chlor Granulat SUPER PERLIERT | 1,0 kg</div>
-                                </div>
-                                <div>
-                                    <div class="product-price">8,95 € *</div>
-                                    <div class="product-unit-price">8,95 € pro 1 kg</div>
-                                    <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
-                                </div>
-                            </div>
-                            <div class="product-card">
-                                <span class="product-badge badge-bestseller">Bestseller</span>
-                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="Algizid">
-                                <div>
-                                    <h4>CRISTAL</h4>
-                                    <div class="product-title-main">Flüssig-Algizid Aktivator | 1,0 l</div>
-                                </div>
-                                <div>
-                                    <div class="product-price">6,95 € *</div>
-                                    <div class="product-unit-price">6,95 € pro 1 l</div>
-                                    <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+button.secondary:hover {
+    background-color: #5a6268;
+}
 
-                    <div class="result-section">
-                        <h3>4. Schritt-für-Schritt-Anleitung (Anwendung)</h3>
-                        <ol class="guide-steps">
-                            <li><strong>Filteranlage ausschalten:</strong> Schalten Sie Ihre Pumpe/Filteranlage komplett aus, bevor Sie mit der Chemikaliendosierung beginnen.</li>
-                            <li><strong>Granulat in einem Eimer auflösen:</strong> Nehmen Sie einen sauberen Eimer mit lauwarmem Wasser und lösen Sie die berechnete Menge (ca. <span id="res-dosage-step"></span>) darin unter Rühren vollständig auf.</li>
-                            <li><strong>Gleichmäßig ins Wasser einbringen:</strong> Gießen Sie die gelöste Mischung langsam und gleichmäßig entlang des Beckenrandes in den Pool (nicht direkt auf die Einlaufdüsen oder den Boden).</li>
-                            <li><strong>Filteranlage starten:</strong> Schalten Sie die Filteranlage wieder ein und lassen Sie diese nun für mindestens 4 bis 6 Stunden durchgehend laufen, damit sich das Mittel optimal im Poolwasser verteilt.</li>
-                        </ol>
-                    </div>
-                </div>
+/* Ergebnis-Sektionen */
+.result-section {
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
 
-                <div class="btn-container">
-                    <button type="button" class="secondary" onclick="nextStep(4)">Zurück</button>
-                    <div>
-                        <button type="button" onclick="window.print()" class="secondary" style="background-color: #6c757d;">Ausdrucken</button>
-                        <button type="button" onclick="downloadPDF()" style="background-color: var(--success-color);">Als PDF speichern (für E-Mail Support)</button>
-                    </div>
-                </div>
-            </div>
+.result-section h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-size: 1.05rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.3rem;
+}
 
-        </form>
-    </div>
+.manufacturer-hint {
+    font-size: 0.8rem;
+    color: #666;
+    font-style: italic;
+    margin-top: 0.3rem;
+}
 
-    <script>
-        let currentStep = 1;
+/* Steuerung von Elementen, die nur im PDF/Druck sichtbar sein sollen */
+.print-only {
+    display: none;
+}
 
-        function updateCalcFields() {
-            const shape = document.getElementById('poolShape').value;
-            const container = document.getElementById('fieldsContainer');
-            let html = '';
+/* Shop-Ähnliches Produkt-Grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1rem;
+    margin-top: 0.8rem;
+}
 
-            if (shape === 'rechteckig') {
-                html = `
-                    <label>Länge (m):</label><input type="number" id="calcLength" placeholder="z. B. 6">
-                    <label>Breite (m):</label><input type="number" id="calcWidth" placeholder="z. B. 3">
-                    <label>Wassertiefe (m) / Bei Schrägboden Durchschnitt:</label><input type="number" id="calcDepth" placeholder="z. B. 1.5">
-                `;
-            } else if (shape === 'rund') {
-                html = `
-                    <label>Durchmesser (m):</label><input type="number" id="calcDiameter" placeholder="z. B. 4">
-                    <label>Wassertiefe (m):</label><input type="number" id="calcDepth" placeholder="z. B. 1.2">
-                `;
-            } else if (shape === 'oval' || shape === 'achtform') {
-                html = `
-                    <label>Maximale Länge (m):</label><input type="number" id="calcLength" placeholder="z. B. 7">
-                    <label>Maximale Breite (m):</label><input type="number" id="calcWidth" placeholder="z. B. 3.5">
-                    <label>Wassertiefe (m):</label><input type="number" id="calcDepth" placeholder="z. B. 1.5">
-                `;
-            }
-            container.innerHTML = html;
-        }
+.product-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        function calculateVolume() {
-            const shape = document.getElementById('poolShape').value;
-            let volume = 0;
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: #000;
+    text-transform: uppercase;
+}
 
-            if (shape === 'rechteckig') {
-                let l = parseFloat(document.getElementById('calcLength').value) || 0;
-                let w = parseFloat(document.getElementById('calcWidth').value) || 0;
-                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
-                volume = l * w * d;
-            } else if (shape === 'rund') {
-                let dm = parseFloat(document.getElementById('calcDiameter').value) || 0;
-                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
-                let r = dm / 2;
-                volume = Math.PI * Math.pow(r, 2) * d;
-            } else if (shape === 'oval') {
-                let l = parseFloat(document.getElementById('calcLength').value) || 0;
-                let w = parseFloat(document.getElementById('calcWidth').value) || 0;
-                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
-                volume = l * w * d * 0.89;
-            } else if (shape === 'achtform') {
-                let l = parseFloat(document.getElementById('calcLength').value) || 0;
-                let w = parseFloat(document.getElementById('calcWidth').value) || 0;
-                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
-                volume = l * w * d * 0.85;
-            }
+.badge-bestseller {
+    background-color: var(--badge-yellow);
+}
 
-            if (volume > 0) {
-                document.getElementById('volume').value = volume.toFixed(2);
-                alert('Berechnetes Volumen: ' + volume.toFixed(2) + ' m³ wurde oben eingetragen!');
-            } else {
-                alert('Bitte füllen Sie alle Maße korrekt aus.');
-            }
-        }
+.badge-stock {
+    background-color: var(--badge-green);
+    color: white;
+}
 
-        function updateParameterFields() {
-            const method = document.getElementById('disinfectionMethod').value;
-            const container = document.getElementById('parameterContainer');
-            let html = '';
+.product-card img {
+    width: 100px;
+    height: 120px;
+    object-fit: contain;
+    margin: 1.5rem auto 0.5rem auto;
+}
 
-            if (method === 'chlor') {
-                html = `
-                    <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
-                    <label for="val-freechlor">Freies Chlor (mg/l):</label><input type="number" step="0.1" id="val-freechlor" placeholder="z. B. 1.0">
-                    <label for="val-totchlor">Gesamtchlor (mg/l):</label><input type="number" step="0.1" id="val-totchlor" placeholder="z. B. 1.2">
-                    <label for="val-cya">Cyanursäure (mg/l):</label><input type="number" id="val-cya" placeholder="z. B. 20">
-                `;
-            } else if (method === 'salz') {
-                html = `
-                    <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
-                    <label for="val-salt">Salzgehalt (g/l):</label><input type="number" step="0.1" id="val-salt" placeholder="z. B. 3.0">
-                    <label for="val-freechlor">Freies Chlor (mg/l):</label><input type="number" step="0.1" id="val-freechlor" placeholder="z. B. 0.8">
-                    <label for="val-cya">Cyanursäure (mg/l):</label><input type="number" id="val-cya" placeholder="z. B. 15">
-                `;
-            } else if (method === 'aktivsauerstoff') {
-                html = `
-                    <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
-                    <label for="val-oxy">Sauerstoffgehalt (mg/l):</label><input type="number" step="0.1" id="val-oxy" placeholder="z. B. 5.0">
-                    <label for="val-alg">Algizid-Wert / Status:</label><input type="text" id="val-alg" placeholder="z. B. Dosiert / Ausreichend">
-                `;
-            } else if (method === 'brom') {
-                html = `
-                    <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
-                    <label for="val-brom">Bromwert (mg/l):</label><input type="number" step="0.1" id="val-brom" placeholder="z. B. 2.5">
-                    <label for="val-ta">Gesamtalkalinität (TA-Wert in mg/l):</label><input type="number" id="val-ta" placeholder="z. B. 100">
-                    <label for="val-calcium">Calciumhärte (mg/l):</label><input type="number" id="val-calcium" placeholder="z. B. 200">
-                `;
-            }
-            container.innerHTML = html;
-        }
+.product-card h4 {
+    margin: 0.5rem 0 0.2rem 0;
+    font-size: 0.9rem;
+    color: #444;
+    font-weight: normal;
+}
 
-        window.onload = function() {
-            updateCalcFields();
-            updateParameterFields();
-        };
+.product-title-main {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    min-height: 2.4em;
+}
 
-        function nextStep(step) {
-            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-            document.getElementById('step-' + step).classList.add('active');
-            currentStep = step;
-            
-            for (let i = 1; i <= 5; i++) {
-                let dot = document.getElementById('dot-' + i);
-                dot.classList.remove('active', 'completed');
-                if (i < step) {
-                    dot.classList.add('completed');
-                } else if (i === step) {
-                    dot.classList.add('active');
-                }
-            }
-        }
+.product-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0.5rem 0 0.1rem 0;
+}
 
-        function analyzeData() {
-            nextStep(5);
-            
-            let volume = document.getElementById('volume').value || '20';
-            let location = document.getElementById('locationType').value;
-            let environment = document.getElementById('environment').value;
-            let filter = document.getElementById('filter').value;
-            let cover = document.getElementById('cover').value;
-            let method = document.getElementById('disinfectionMethod').value;
-            let ph = document.getElementById('val-ph') ? document.getElementById('val-ph').value || '7.5' : '7.5';
+.product-unit-price {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 0.8rem;
+}
 
-            let selectedProblems = [];
-            document.querySelectorAll('input[name="problem"]:checked').forEach(cb => {
-                selectedProblems.push(cb.getAttribute('data-text'));
-            });
-            let problemText = selectedProblems.length > 0 ? selectedProblems.join(', ') : 'Keine vordefinierten Probleme ausgewählt';
-            
-            let customText = document.getElementById('customProblemText').value.trim();
+.product-card a {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
 
-            // Werte in PDF-Felder einfügen
-            document.getElementById('pdf-vol').innerText = volume;
-            document.getElementById('pdf-loc').innerText = location + (environment === 'baeume' ? ' (In der Nähe von Bäumen)' : ' (Freistehend)');
-            document.getElementById('pdf-filt').innerText = filter;
-            document.getElementById('pdf-cov').innerText = cover;
-            document.getElementById('pdf-meth').innerText = method.toUpperCase();
-            document.getElementById('pdf-ph').innerText = ph;
+.product-card a:hover {
+    background-color: var(--secondary-color);
+}
 
-            // Werte in die direkte Ansicht einfügen
-            document.getElementById('res-problem').innerText = problemText;
-            
-            if (customText) {
-                document.getElementById('res-custom').innerText = customText;
-                document.getElementById('res-custom-wrapper').style.display = 'block';
-            } else {
-                document.getElementById('res-custom-wrapper').style.display = 'none';
-            }
+/* Idiotensichere Anleitung */
+.guide-steps {
+    margin: 0;
+    padding-left: 1.2rem;
+    line-height: 1.6;
+}
 
-            let dosageValue = (volume * 10).toFixed(0) + 'g';
-            document.getElementById('res-dosage').innerText = dosageValue;
-            document.getElementById('res-dosage-step').innerText = dosageValue;
-        }
+.guide-steps li {
+    margin-bottom: 0.5rem;
+}
 
-        function downloadPDF() {
-            const element = document.getElementById('pdfContent');
-            const opt = {
-                margin:       10,
-                filename:     'Pool-Handlungsempfehlung-Support.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().from(element).set(opt).save();
-        }
-    </script>
-</body>
-</html>
+#pdfContent {
+    background: white;
+    padding: 0.5rem;
+}
