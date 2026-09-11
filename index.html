@@ -229,7 +229,7 @@
                 <input type="number" id="volume" placeholder="z. B. 20">
 
                 <div class="calc-box">
-                    <h3>Oder Volumen automatisch berechnen lassen:</h3>
+                    <h3>Volumen berechnen lassen:</h3>
                     
                     <label for="poolShape">Beckenform:</label>
                     <select id="poolShape" onchange="updateCalcFields()">
@@ -250,10 +250,22 @@
                 </div>
             </div>
 
-            <!-- SCHRITT 2: Ausrüstung & Umgebung -->
+            <!-- SCHRITT 2: Ausrüstung & Standort -->
             <div class="step" id="step-2">
                 <h2>Schritt 2: Ausrüstung & Standort</h2>
                 
+                <label for="locationType">Standort (Indoor / Outdoor):</label>
+                <select id="locationType">
+                    <option value="outdoor">Outdoor (im Freien)</option>
+                    <option value="indoor">Indoor (Hallenbad / Überdacht)</option>
+                </select>
+
+                <label for="environment">Umgebung / Bewuchs:</label>
+                <select id="environment">
+                    <option value="frei">Freistehend / Keine Bäume in der Nähe</option>
+                    <option value="baeume">In der Nähe von Bäumen / Büschen (Laub & Blütenstaub)</option>
+                </select>
+
                 <label for="disinfection">Desinfektionsverfahren:</label>
                 <select id="disinfection">
                     <option value="chlor">Chlor</option>
@@ -401,7 +413,6 @@
             document.getElementById('step-' + step).classList.add('active');
             currentStep = step;
             
-            // Timeline-Status aktualisieren
             for (let i = 1; i <= 4; i++) {
                 let dot = document.getElementById('dot-' + i);
                 dot.classList.remove('active', 'completed');
@@ -418,10 +429,17 @@
             
             let volume = document.getElementById('volume').value || '20';
             let ph = document.getElementById('phValue').value || '7.5';
+            let location = document.getElementById('locationType').value;
+            let environment = document.getElementById('environment').value;
             
+            let extraInfo = "";
+            if(environment === 'baeume') {
+                extraInfo = " Da Ihr Pool in der Nähe von Bäumen steht, ist ein zusätzlicher Algizid-Einsatz und Skimmer-Check ratsam.";
+            }
+
             let resultHTML = `
-                <p><strong>Diagnose:</strong> Ihr pH-Wert liegt mit ${ph} im zu hohen Bereich. Dadurch kann das Desinfektionsmittel nicht optimal wirken, was zu Wassertrübung oder Algenbildung führt.</p>
-                <p><strong>Schritt-für-Schritt-Anleitung für Ihren ${volume}m³ Pool:</strong></p>
+                <p><strong>Diagnose:</strong> Ihr pH-Wert liegt mit ${ph} im zu hohen Bereich. Dadurch kann das Desinfektionsmittel nicht optimal wirken.${extraInfo}</p>
+                <p><strong>Schritt-für-Schritt-Anleitung für Ihren ${volume}m³ (${location}) Pool:</strong></p>
                 <ol>
                     <li>Filteranlage für 24 Stunden durchgehend laufen lassen.</li>
                     <li>Geben Sie ca. <strong>${(volume * 10).toFixed(0)}g pH-Minus Granulat</strong> hinzu, um den pH-Wert auf 7,2 zu senken.</li>
