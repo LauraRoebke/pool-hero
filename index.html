@@ -16,17 +16,18 @@
     </header>
 
     <div class="container">
-        <!-- Klickbare Timeline-Leiste -->
+        <!-- Klickbare Timeline-Leiste (jetzt 5 Schritte) -->
         <div class="timeline">
             <div class="timeline-step active" id="dot-1" onclick="nextStep(1)" title="Volumen & Maße">1</div>
             <div class="timeline-step" id="dot-2" onclick="nextStep(2)" title="Ausrüstung & Standort">2</div>
-            <div class="timeline-step" id="dot-3" onclick="nextStep(3)" title="Problem & Werte">3</div>
-            <div class="timeline-step" id="dot-4" onclick="nextStep(4)" title="KI-Ergebnis">4</div>
+            <div class="timeline-step" id="dot-3" onclick="nextStep(3)" title="Wasserwerte">3</div>
+            <div class="timeline-step" id="dot-4" onclick="nextStep(4)" title="Problem & Foto">4</div>
+            <div class="timeline-step" id="dot-5" onclick="nextStep(5)" title="KI-Ergebnis">5</div>
         </div>
 
         <form id="finderForm">
             
-            <!-- SCHRITT 1: Volumen & Rechner (JETZT KORREKT ALS ACTIVE) -->
+            <!-- SCHRITT 1: Volumen & Rechner -->
             <div class="step active" id="step-1">
                 <h2>Schritt 1: Beckenvolumen & Maße</h2>
                 
@@ -92,9 +93,9 @@
                 </div>
             </div>
 
-            <!-- SCHRITT 3: Problem & Wasserwerte (ACTIVE HIER ENTFERNT) -->
+            <!-- SCHRITT 3: Nur Wasserwerte -->
             <div class="step" id="step-3">
-                <h2>Schritt 3: Problem & Wasserwerte</h2>
+                <h2>Schritt 3: Wasserwerte & Desinfektion</h2>
                 
                 <label for="disinfectionMethod">Desinfektionsart:</label>
                 <select id="disinfectionMethod" onchange="updateParameterFields()">
@@ -104,28 +105,41 @@
                     <option value="brom">Brom</option>
                 </select>
 
-                <label>Aktuelles Problem:</label>
+                <!-- Dynamischer Container für die passenden Parameter -->
+                <div id="parameterContainer"></div>
+
+                <div class="btn-container">
+                    <button type="button" class="secondary" onclick="nextStep(2)">Zurück</button>
+                    <button type="button" onclick="nextStep(4)">Weiter</button>
+                </div>
+            </div>
+
+            <!-- SCHRITT 4: Problem, vorgegebene Antworten, Freifeld & Bild -->
+            <div class="step" id="step-4">
+                <h2>Schritt 4: Problembeschreibung & Foto</h2>
+                
+                <label>Aktuelles Problem (Vorgegebene Auswahl):</label>
                 <div class="checkbox-group" id="problemCheckboxGroup">
                     <label><input type="checkbox" name="problem" value="gruen" data-text="Wasser ist grün / Algen"> Wasser ist grün / Algen</label>
                     <label><input type="checkbox" name="problem" value="trueb" data-text="Wasser ist trüb / milchig"> Wasser ist trüb / milchig</label>
                     <label><input type="checkbox" name="problem" value="rand" data-text="Gelber/schmieriger Rand an der Wasserlinie"> Gelber/schmieriger Rand an der Wasserlinie</label>
                 </div>
 
-                <!-- Dynamischer Container für die passenden Parameter -->
-                <div id="parameterContainer"></div>
+                <label for="customProblemText" style="margin-top: 1.5rem;">Zusätzliche Beschreibung / Freifeld:</label>
+                <textarea id="customProblemText" rows="3" placeholder="Beschreiben Sie hier Ihr Problem genauer (z.B. riecht nach Chlor, Pumpe brummt etc.)..."></textarea>
 
-                <label for="imageUpload">Optional: Foto hochladen</label>
+                <label for="imageUpload" style="margin-top: 1.5rem;">Optional: Foto des Poolwassers / des Problems hochladen</label>
                 <input type="file" id="imageUpload" accept="image/*">
 
                 <div class="btn-container">
-                    <button type="button" class="secondary" onclick="nextStep(2)">Zurück</button>
+                    <button type="button" class="secondary" onclick="nextStep(3)">Zurück</button>
                     <button type="button" onclick="analyzeData()">KI-Analyse starten</button>
                 </div>
             </div>
 
-            <!-- SCHRITT 4: Ergebnis -->
-            <div class="step" id="step-4">
-                <h2>Schritt 4: Ihre KI-Handlungsempfehlung</h2>
+            <!-- SCHRITT 5: Ergebnis -->
+            <div class="step" id="step-5">
+                <h2>Schritt 5: Ihre KI-Handlungsempfehlung</h2>
                 
                 <div id="pdfContent">
                     <!-- Wird nur im PDF / Druck angezeigt -->
@@ -145,6 +159,7 @@
                     <div class="result-section">
                         <h3>1. Problembenennung</h3>
                         <p><strong>Erkanntes Problem:</strong> <span id="res-problem"></span></p>
+                        <p id="res-custom-wrapper" style="margin-top: 0.5rem; display: none;"><strong>Zusätzliche Notiz:</strong> <span id="res-custom"></span></p>
                     </div>
 
                     <div class="result-section">
@@ -211,7 +226,7 @@
                 </div>
 
                 <div class="btn-container">
-                    <button type="button" class="secondary" onclick="nextStep(3)">Zurück</button>
+                    <button type="button" class="secondary" onclick="nextStep(4)">Zurück</button>
                     <div>
                         <button type="button" onclick="window.print()" class="secondary" style="background-color: #6c757d;">Ausdrucken</button>
                         <button type="button" onclick="downloadPDF()" style="background-color: var(--success-color);">Als PDF speichern (für E-Mail Support)</button>
@@ -331,7 +346,7 @@
             document.getElementById('step-' + step).classList.add('active');
             currentStep = step;
             
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 5; i++) {
                 let dot = document.getElementById('dot-' + i);
                 dot.classList.remove('active', 'completed');
                 if (i < step) {
@@ -343,7 +358,7 @@
         }
 
         function analyzeData() {
-            nextStep(4);
+            nextStep(5);
             
             let volume = document.getElementById('volume').value || '20';
             let location = document.getElementById('locationType').value;
@@ -357,8 +372,9 @@
             document.querySelectorAll('input[name="problem"]:checked').forEach(cb => {
                 selectedProblems.push(cb.getAttribute('data-text'));
             });
-            let problemText = selectedProblems.length > 0 ? selectedProblems.join(', ') : 'Kein spezifisches Problem ausgewählt (Allgemeine Pflege)';
-            let dosageValue = (volume * 10).toFixed(0) + 'g';
+            let problemText = selectedProblems.length > 0 ? selectedProblems.join(', ') : 'Keine vordefinierten Probleme ausgewählt';
+            
+            let customText = document.getElementById('customProblemText').value.trim();
 
             // Werte in PDF-Felder einfügen
             document.getElementById('pdf-vol').innerText = volume;
@@ -368,8 +384,17 @@
             document.getElementById('pdf-meth').innerText = method.toUpperCase();
             document.getElementById('pdf-ph').innerText = ph;
 
-            // Werte in die direkte Ansicht (ab Punkt 1) einfügen
+            // Werte in die direkte Ansicht einfügen
             document.getElementById('res-problem').innerText = problemText;
+            
+            if (customText) {
+                document.getElementById('res-custom').innerText = customText;
+                document.getElementById('res-custom-wrapper').style.display = 'block';
+            } else {
+                document.getElementById('res-custom-wrapper').style.display = 'none';
+            }
+
+            let dosageValue = (volume * 10).toFixed(0) + 'g';
             document.getElementById('res-dosage').innerText = dosageValue;
             document.getElementById('res-dosage-step').innerText = dosageValue;
         }
