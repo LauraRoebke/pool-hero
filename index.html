@@ -85,6 +85,20 @@
             font-size: 1rem;
         }
 
+        .calc-box {
+            background: #f8f9fa;
+            border: 1px dashed var(--primary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .calc-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--primary-color);
+        }
+
         .radio-group, .checkbox-group {
             margin-top: 0.5rem;
         }
@@ -166,19 +180,31 @@
 
         <form id="finderForm">
             
-            <!-- SCHRITT 1: Volumen -->
+            <!-- SCHRITT 1: Volumen & Rechner -->
             <div class="step active" id="step-1">
                 <h2>Schritt 1: Beckenvolumen & Maße</h2>
-                <label for="volume">Wasservolumen (in m³):</label>
-                <input type="number" id="volume" placeholder="z. B. 20">
                 
-                <label for="poolShape">Beckenform:</label>
-                <select id="poolShape">
-                    <option value="rechteckig">Rechteckig</option>
-                    <option value="rund">Rund</option>
-                    <option value="oval">Oval</option>
-                    <option value="achtform">Achtform</option>
-                </select>
+                <label for="volume">Wasservolumen direkt eingeben (in m³):</label>
+                <input type="number" id="volume" placeholder="z. B. 20">
+
+                <!-- Integrierter Volumenrechner -->
+                <div class="calc-box">
+                    <h3>Oder Volumen automatisch berechnen lassen:</h3>
+                    
+                    <label for="poolShape">Beckenform:</label>
+                    <select id="poolShape" onchange="updateCalcFields()">
+                        <option value="rechteckig">Rechteckpool</option>
+                        <option value="rund">Rundpool</option>
+                        <option value="oval">Ovalpool</option>
+                        <option value="achtform">Achtformpool</option>
+                    </select>
+
+                    <div id="fieldsContainer">
+                        <!-- Wird dynamisch per JavaScript gefüllt -->
+                    </div>
+
+                    <button type="button" class="secondary" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="calculateVolume()">Volumen berechnen & übernehmen</button>
+                </div>
 
                 <div class="btn-container">
                     <span></span>
@@ -268,12 +294,78 @@
     <script>
         let currentStep = 1;
 
+        // Dynamische Eingabefelder für den Rechner basierend auf Formeln
+        function updateCalcFields() {
+            const shape = document.getElementById('poolShape').value;
+            const container = document.getElementById('fieldsContainer');
+            let html = '';
+
+            if (shape === 'rechteckig') {
+                html = `
+                    <label>Länge (m):</label><input type="number" id="calcLength" placeholder="z. B. 6">
+                    <label>Breite (m):</label><input type="number" id="calcWidth" placeholder="z. B. 3">
+                    <label>Wassertiefe (m) / Bei Schrägboden Durchschnitt:</label><input type="number" id="calcDepth" placeholder="z. B. 1.5">
+                `;
+            } else if (shape === 'rund') {
+                html = `
+                    <label>Durchmesser (m):</label><input type="number" id="calcDiameter" placeholder="z. B. 4">
+                    <label>Wassertiefe (m):</label><input type="number" id="calcDepth" placeholder="z. B. 1.2">
+                `;
+            } else if (shape === 'oval' || shape === 'achtform') {
+                html = `
+                    <label>Maximale Länge (m):</label><input type="number" id="calcLength" placeholder="z. B. 7">
+                    <label>Maximale Breite (m):</label><input type="number" id="calcWidth" placeholder="z. B. 3.5">
+                    <label>Wassertiefe (m):</label><input type="number" id="calcDepth" placeholder="z. B. 1.5">
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // Volumenberechnung nach euren Vorgaben ausführen
+        function calculateVolume() {
+            const shape = document.getElementById('poolShape').value;
+            let volume = 0;
+
+            if (shape === 'rechteckig') {
+                let l = parseFloat(document.getElementById('calcLength').value) || 0;
+                let w = parseFloat(document.getElementById('calcWidth').value) || 0;
+                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
+                volume = l * w * d;
+            } else if (shape === 'rund') {
+                let dm = parseFloat(document.getElementById('calcDiameter').value) || 0;
+                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
+                let r = dm / 2;
+                volume = Math.PI * Math.pow(r, 2) * d;
+            } else if (shape === 'oval') {
+                let l = parseFloat(document.getElementById('calcLength').value) || 0;
+                let w = parseFloat(document.getElementById('calcWidth').value) || 0;
+                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
+                volume = l * w * d * 0.89;
+            } else if (shape === 'achtform') {
+                let l = parseFloat(document.getElementById('calcLength').value) || 0;
+                let w = parseFloat(document.getElementById('calcWidth').value) || 0;
+                let d = parseFloat(document.getElementById('calcDepth').value) || 0;
+                volume = l * w * d * 0.85;
+            }
+
+            if (volume > 0) {
+                document.getElementById('volume').value = volume.toFixed(2);
+                alert('Berechnetes Volumen: ' + volume.toFixed(2) + ' m³ wurde oben eingetragen!');
+            } else {
+                alert('Bitte füllen Sie alle Maße korrekt aus.');
+            }
+        }
+
+        // Initial beim Laden die Felder für Rechteck setzen
+        window.onload = function() {
+            updateCalcFields();
+        };
+
         function nextStep(step) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById('step-' + step).classList.add('active');
             currentStep = step;
             
-            // Progress Bar anpassen
             let progressPercentage = (step / 4) * 100;
             document.getElementById('progressBar').style.width = progressPercentage + '%';
         }
@@ -289,7 +381,7 @@
                 <p><strong>Schritt-für-Schritt-Anleitung für Ihren ${volume}m³ Pool:</strong></p>
                 <ol>
                     <li>Filteranlage für 24 Stunden durchgehend laufen lassen.</li>
-                    <li>Geben Sie ca. <strong>${volume * 10}g pH-Minus Granulat</strong> hinzu, um den pH-Wert auf 7,2 zu senken.</li>
+                    <li>Geben Sie ca. <strong>${(volume * 10).toFixed(0)}g pH-Minus Granulat</strong> hinzu, um den pH-Wert auf 7,2 zu senken.</li>
                     <li>Führen Sie nach 4 Stunden eine Schockchlorung durch.</li>
                 </ol>
                 <p style="color: var(--primary-color); font-weight: bold;">Empfohlene Produkte wurden für Sie im Shop vorausgewählt.</p>
