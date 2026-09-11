@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool- & Problem-Finder | POOL Total</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #0088cc;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 2rem auto;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 0;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .radio-group, .checkbox-group {
+            margin-top: 0.5rem;
+        }
+
+        .radio-group label, .checkbox-group label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            cursor: pointer;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        button.secondary {
+            background-color: #6c757d;
+        }
+
+        button.secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .progress-bar {
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 20%;
+            transition: width 0.3s ease;
+        }
+
+        .result-box {
+            background: #e8f4fd;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 6px 6px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>POOL- & PROBLEM-FINDER</h1>
+        <p>Sofortige Hilfe für klares Wasser und saubere Ränder</p>
+    </header>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+
+        <form id="finderForm">
+            
+            <!-- SCHRITT 1: Volumen -->
+            <div class="step active" id="step-1">
+                <h2>Schritt 1: Beckenvolumen & Maße</h2>
+                <label for="volume">Wasservolumen (in m³):</label>
+                <input type="number" id="volume" placeholder="z. B. 20">
+                
+                <label for="poolShape">Beckenform:</label>
+                <select id="poolShape">
+                    <option value="rechteckig">Rechteckig</option>
+                    <option value="rund">Rund</option>
+                    <option value="oval">Oval</option>
+                    <option value="achtform">Achtform</option>
+                </select>
+
+                <div class="btn-container">
+                    <span></span>
+                    <button type="button" onclick="nextStep(2)">Weiter</button>
+                </div>
+            </div>
+
+            <!-- SCHRITT 2: Ausrüstung & Umgebung -->
+            <div class="step" id="step-2">
+                <h2>Schritt 2: Ausrüstung & Standort</h2>
+                
+                <label for="disinfection">Desinfektionsverfahren:</label>
+                <select id="disinfection">
+                    <option value="chlor">Chlor</option>
+                    <option value="brom">Brom</option>
+                    <option value="salzwasser">Salzwasser</option>
+                    <option value="aktivsauerstoff">Aktivsauerstoff</option>
+                </select>
+
+                <label for="filter">Filterung:</label>
+                <select id="filter">
+                    <option value="sand">Sandfilter</option>
+                    <option value="glas">Filterglas</option>
+                    <option value="kartusche">Kartuschenfilter</option>
+                </select>
+
+                <label for="cover">Schutz / Abdeckung:</label>
+                <select id="cover">
+                    <option value="keine">Keine</option>
+                    <option value="sommerfolie">Sommerfolie / Solarfolie</option>
+                    <option value="winterabdeckung">Feste Abdeckung</option>
+                    <option value="ueberdachung">Überdachung</option>
+                </select>
+
+                <div class="btn-container">
+                    <button type="button" class="secondary" onclick="nextStep(1)">Zurück</button>
+                    <button type="button" onclick="nextStep(3)">Weiter</button>
+                </div>
+            </div>
+
+            <!-- SCHRITT 3: Problem & Werte -->
+            <div class="step" id="step-3">
+                <h2>Schritt 3: Problem & Wasserwerte</h2>
+                
+                <label>Aktuelles Problem:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="problem" value="gruen"> Wasser ist grün / Algen</label>
+                    <label><input type="checkbox" name="problem" value="trueb"> Wasser ist trüb / milchig</label>
+                    <label><input type="checkbox" name="problem" value="rand"> Gelber/schmieriger Rand an der Wasserlinie</label>
+                </div>
+
+                <label for="phValue">Aktueller pH-Wert:</label>
+                <input type="number" step="0.1" id="phValue" placeholder="z. B. 7.6">
+
+                <label for="chlorValue">Aktueller Chlor-Wert (mg/l):</label>
+                <input type="number" step="0.1" id="chlorValue" placeholder="z. B. 0.2">
+
+                <label for="imageUpload">Optional: Foto hochladen</label>
+                <input type="file" id="imageUpload" accept="image/*">
+
+                <div class="btn-container">
+                    <button type="button" class="secondary" onclick="nextStep(2)">Zurück</button>
+                    <button type="button" onclick="analyzeData()">KI-Analyse starten</button>
+                </div>
+            </div>
+
+            <!-- SCHRITT 4: Ergebnis -->
+            <div class="step" id="step-4">
+                <h2>Schritt 4: Ihre KI-Handlungsempfehlung</h2>
+                
+                <div class="result-box" id="aiResult">
+                    <p><strong>Analyse läuft...</strong> Die KI berechnet die optimalen Schritte für Ihren Pool.</p>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="secondary" onclick="nextStep(3)">Zurück</button>
+                    <div>
+                        <button type="button" onclick="window.print()" style="background-color: #28a745;">Als PDF speichern</button>
+                        <button type="button" onclick="alert('Daten wurden an den Kundenservice übergeben!')">An Support senden</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function nextStep(step) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById('step-' + step).classList.add('active');
+            currentStep = step;
+            
+            // Progress Bar anpassen
+            let progressPercentage = (step / 4) * 100;
+            document.getElementById('progressBar').style.width = progressPercentage + '%';
+        }
+
+        function analyzeData() {
+            nextStep(4);
+            
+            let volume = document.getElementById('volume').value || '20';
+            let ph = document.getElementById('phValue').value || '7.5';
+            
+            let resultHTML = `
+                <p><strong>Diagnose:</strong> Ihr pH-Wert liegt mit ${ph} im zu hohen Bereich. Dadurch kann das Desinfektionsmittel nicht optimal wirken, was zu Wassertrübung oder Algenbildung führt.</p>
+                <p><strong>Schritt-für-Schritt-Anleitung für Ihren ${volume}m³ Pool:</strong></p>
+                <ol>
+                    <li>Filteranlage für 24 Stunden durchgehend laufen lassen.</li>
+                    <li>Geben Sie ca. <strong>${volume * 10}g pH-Minus Granulat</strong> hinzu, um den pH-Wert auf 7,2 zu senken.</li>
+                    <li>Führen Sie nach 4 Stunden eine Schockchlorung durch.</li>
+                </ol>
+                <p style="color: var(--primary-color); font-weight: bold;">Empfohlene Produkte wurden für Sie im Shop vorausgewählt.</p>
+            `;
+            
+            setTimeout(() => {
+                document.getElementById('aiResult').innerHTML = resultHTML;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
