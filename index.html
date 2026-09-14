@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pool- & Problem-Finder | POOL Total</title>
+    <title>PoolHero | Der smarte Helfer bei Pool-Problemen</title>
     <!-- html2pdf Bibliothek für echten PDF-Export mit Formulardaten -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -11,8 +11,8 @@
 <body>
 
     <header>
-        <h1>POOL- & PROBLEM-FINDER</h1>
-        <p>Sofortige Hilfe für klares Wasser und saubere Ränder</p>
+        <h1>PoolHero</h1>
+        <p>Der smarte Helfer bei Pool-Problemen.</p>
     </header>
 
     <div class="container">
@@ -22,7 +22,7 @@
             <div class="timeline-step" id="dot-2" onclick="nextStep(2)" title="Ausrüstung & Standort">2</div>
             <div class="timeline-step" id="dot-3" onclick="nextStep(3)" title="Wasserwerte">3</div>
             <div class="timeline-step" id="dot-4" onclick="nextStep(4)" title="Problem & Foto">4</div>
-            <div class="timeline-step" id="dot-5" onclick="nextStep(5)" title="KI-Ergebnis">5</div>
+            <div class="timeline-step" id="dot-5" onclick="nextStep(5)" title="Ergebnis">5</div>
         </div>
 
         <form id="finderForm">
@@ -47,7 +47,7 @@
 
                     <div id="fieldsContainer"></div>
 
-                    <button type="button" class="secondary" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="calculateVolume()">Volumen berechnen & übernehmen</button>
+                    <button type="button" class="secondary" style="margin-top: 1.2rem; padding: 0.6rem 1.2rem; font-size: 0.9rem;" onclick="calculateVolume()">Volumen berechnen & übernehmen</button>
                 </div>
 
                 <div class="btn-container">
@@ -120,19 +120,14 @@
                 
                 <label>Aktuelles Problem (Vorgegebene Auswahl):</label>
                 <div class="checkbox-group" id="problemCheckboxGroup">
-                    <!-- Wasserbeschaffenheit -->
                     <label><input type="checkbox" name="problem" value="gruen" data-text="Grünes Wasser"> Grünes Wasser</label>
                     <label><input type="checkbox" name="problem" value="trueb" data-text="Milchiges, trübes Wasser"> Milchiges, trübes Wasser</label>
                     <label><input type="checkbox" name="problem" value="schaum" data-text="Schaumbildung auf der Wasseroberfläche"> Schaumbildung auf der Wasseroberfläche</label>
-                    
-                    <!-- Ablagerungen & Ränder -->
                     <label><input type="checkbox" name="problem" value="rand" data-text="Starker Schmutzrand auf Wasserlinie (gelblich)"> Starker Schmutzrand auf Wasserlinie (gelblich)</label>
                     <label><input type="checkbox" name="problem" value="kalk" data-text="Kalkablagerungen (weiße bis graue Ränder oder raue Wände)"> Kalkablagerungen (weiße bis graue Ränder oder raue Wände)</label>
                     <label><input type="checkbox" name="problem" value="verfaerbung" data-text="Braune, rötliche oder schwarze Verfärbungen und Ablagerungen"> Braune, rötliche oder schwarze Verfärbungen und Ablagerungen</label>
                     <label><input type="checkbox" name="problem" value="schleim" data-text="Schleimiger Film (an den Poolwänden und im Rohrsystem)"> Schleimiger Film (an den Poolwänden und im Rohrsystem)</label>
                     <label><input type="checkbox" name="problem" value="folie" data-text="Ausgeblichene oder weiße/helle Folienverfärbungen"> Ausgeblichene oder weiße/helle Folienverfärbungen</label>
-
-                    <!-- Geruch, Gesundheit & Chemie -->
                     <label><input type="checkbox" name="problem" value="geruch" data-text="Starker Chlorgeruch"> Starker Chlorgeruch</label>
                     <label><input type="checkbox" name="problem" value="augen" data-text="Gereizte Augen oder Ausschlag, Rötungen"> Gereizte Augen oder Ausschlag, Rötungen</label>
                     <label><input type="checkbox" name="problem" value="ph" data-text="Plötzlicher und extremer pH-Wert-Absturz oder -Anstieg"> Plötzlicher und extremer pH-Wert-Absturz oder -Anstieg</label>
@@ -140,26 +135,25 @@
                 </div>
 
                 <label for="customProblemText" style="margin-top: 1.5rem;">Zusätzliche Beschreibung / Freifeld:</label>
-                <textarea id="customProblemText" rows="3" placeholder="Beschreiben Sie hier Ihr Problem genauer (z.B. riecht nach Chlor, Pumpe brummt etc.)..."></textarea>
+                <textarea id="customProblemText" rows="3" placeholder="Beschreiben Sie hier Ihr Problem genauer..."></textarea>
 
-                <label for="imageUpload" style="margin-top: 1.5rem;">Optional: Foto des Poolwassers / des Problems hochladen</label>
+                <label for="imageUpload" style="margin-top: 1.5rem;">Optional: Foto des Poolwassers hochladen</label>
                 <input type="file" id="imageUpload" accept="image/*">
 
                 <div class="btn-container">
                     <button type="button" class="secondary" onclick="nextStep(3)">Zurück</button>
-                    <button type="button" onclick="analyzeData()">KI-Analyse starten</button>
+                    <button type="button" onclick="analyzeData()">PoolHero Analyse starten</button>
                 </div>
             </div>
 
             <!-- SCHRITT 5: Ergebnis -->
             <div class="step" id="step-5">
-                <h2>Schritt 5: Ihre KI-Handlungsempfehlung</h2>
+                <h2>Schritt 5: Ihre PoolHero Empfehlung</h2>
                 
                 <div id="pdfContent">
-                    <!-- Wird nur im PDF / Druck angezeigt -->
-                    <div class="print-only" style="margin-bottom: 1.5rem; border-bottom: 2px solid #0056b3; padding-bottom: 0.5rem;">
-                        <h3 style="margin:0; color: #0056b3;">Support-Anfrage Vorlage & Analyse</h3>
-                        <p style="font-size:0.85rem; color:#666; margin:0.2rem 0 0 0;">Diese Daten sind im PDF enthalten und können an den Kundenservice gemailt werden.</p>
+                    <div class="print-only" style="margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem;">
+                        <h3 style="margin:0; color: var(--primary-color);">PoolHero - Support-Anfrage & Analyse</h3>
+                        <p style="font-size:0.85rem; color:#666; margin:0.2rem 0 0 0;">Der smarte Helfer bei Pool-Problemen</p>
                     </div>
 
                     <div class="print-only result-section" style="background: #fff; font-size: 0.9rem;">
@@ -169,7 +163,6 @@
                         <p><strong>Gemessener pH-Wert:</strong> <span id="pdf-ph"></span></p>
                     </div>
 
-                    <!-- Ab hier beginnt die normale Ansicht direkt mit Punkt 1 -->
                     <div class="result-section">
                         <h3>1. Problembenennung</h3>
                         <p><strong>Erkanntes Problem:</strong> <span id="res-problem"></span></p>
@@ -178,9 +171,9 @@
 
                     <div class="result-section">
                         <h3>2. Erforderliche Maßnahme & Dosierung</h3>
-                        <p>Um den pH-Wert zu korrigieren und das Wasser zu klären, wird pH-Minus Granulat benötigt.</p>
+                        <p>Um den Wert zu korrigieren und das Wasser zu klären, wird pH-Minus Granulat benötigt.</p>
                         <p><strong>Empfohlene Menge:</strong> ca. <strong id="res-dosage"></strong></p>
-                        <div class="manufacturer-hint">* Hinweis: Bitte beachten Sie unbedingt auch die genauen Dosierungsangaben und Anwendungshinweise auf dem Produktetikett des Herstellers, da Wassertemperaturen und Ausgangswerte variieren können.</div>
+                        <div class="manufacturer-hint">* Hinweis: Bitte beachten Sie unbedingt auch die genauen Dosierungsangaben und Anwendungshinweise auf dem Produktetikett.</div>
                     </div>
 
                     <div class="result-section">
@@ -188,14 +181,14 @@
                         <div class="product-grid">
                             <div class="product-card">
                                 <span class="product-badge badge-bestseller">Bestseller</span>
-                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="pH-Minus Granulat">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="pH-Minus">
                                 <div>
-                                    <h4>MYPOOL</h4>
+                                    <h4>POOLHERO CHOICE</h4>
                                     <div class="product-title-main">pH-Minus Granulat | 1,0 kg</div>
                                 </div>
                                 <div>
-                                    <div class="product-price">8,50 € *</div>
-                                    <div class="product-unit-price">8,50 € pro 1 kg</div>
+                                    <div class="product-price">8,50 €</div>
+                                    <div class="product-unit-price">8,50 € / 1 kg</div>
                                     <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
                                 </div>
                             </div>
@@ -203,12 +196,12 @@
                                 <span class="product-badge badge-stock">Auf Lager</span>
                                 <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="Chlor Granulat">
                                 <div>
-                                    <h4>MYPOOL</h4>
-                                    <div class="product-title-main">Chlor Granulat SUPER PERLIERT | 1,0 kg</div>
+                                    <h4>POOLHERO CHOICE</h4>
+                                    <div class="product-title-main">Chlor Granulat SUPER | 1,0 kg</div>
                                 </div>
                                 <div>
-                                    <div class="product-price">8,95 € *</div>
-                                    <div class="product-unit-price">8,95 € pro 1 kg</div>
+                                    <div class="product-price">8,95 €</div>
+                                    <div class="product-unit-price">8,95 € / 1 kg</div>
                                     <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
                                 </div>
                             </div>
@@ -216,12 +209,12 @@
                                 <span class="product-badge badge-bestseller">Bestseller</span>
                                 <img src="https://cdn.pixabay.com/photo/2016/11/29/01/34/chlorine-1867183_960_720.jpg" alt="Algizid">
                                 <div>
-                                    <h4>CRISTAL</h4>
-                                    <div class="product-title-main">Flüssig-Algizid Aktivator | 1,0 l</div>
+                                    <h4>POOLHERO CHOICE</h4>
+                                    <div class="product-title-main">Flüssig-Algizid | 1,0 l</div>
                                 </div>
                                 <div>
-                                    <div class="product-price">6,95 € *</div>
-                                    <div class="product-unit-price">6,95 € pro 1 l</div>
+                                    <div class="product-price">6,95 €</div>
+                                    <div class="product-unit-price">6,95 € / 1 l</div>
                                     <a href="#" onclick="alert('Produkt im Shop aufgerufen'); return false;">Zum Produkt</a>
                                 </div>
                             </div>
@@ -229,12 +222,12 @@
                     </div>
 
                     <div class="result-section">
-                        <h3>4. Schritt-für-Schritt-Anleitung (Anwendung)</h3>
+                        <h3>4. Schritt-für-Schritt-Anleitung</h3>
                         <ol class="guide-steps">
-                            <li><strong>Filteranlage ausschalten:</strong> Schalten Sie Ihre Pumpe/Filteranlage komplett aus, bevor Sie mit der Chemikaliendosierung beginnen.</li>
-                            <li><strong>Granulat in einem Eimer auflösen:</strong> Nehmen Sie einen sauberen Eimer mit lauwarmem Wasser und lösen Sie die berechnete Menge (ca. <span id="res-dosage-step"></span>) darin unter Rühren vollständig auf.</li>
-                            <li><strong>Gleichmäßig ins Wasser einbringen:</strong> Gießen Sie die gelöste Mischung langsam und gleichmäßig entlang des Beckenrandes in den Pool (nicht direkt auf die Einlaufdüsen oder den Boden).</li>
-                            <li><strong>Filteranlage starten:</strong> Schalten Sie die Filteranlage wieder ein und lassen Sie diese nun für mindestens 4 bis 6 Stunden durchgehend laufen, damit sich das Mittel optimal im Poolwasser verteilt.</li>
+                            <li><strong>Filteranlage ausschalten:</strong> Schalten Sie Ihre Pumpe vor der Dosierung komplett aus.</li>
+                            <li><strong>In einem Eimer auflösen:</strong> Lösen Sie die berechnete Menge (<span id="res-dosage-step"></span>) in lauwarmem Wasser auf.</li>
+                            <li><strong>Gleichmäßig einbringen:</strong> Gießen Sie die Mischung entlang des Beckenrandes ein.</li>
+                            <li><strong>Filter laufen lassen:</strong> Lassen Sie die Anlage 4 bis 6 Stunden durchgehend laufen.</li>
                         </ol>
                     </div>
                 </div>
@@ -242,8 +235,8 @@
                 <div class="btn-container">
                     <button type="button" class="secondary" onclick="nextStep(4)">Zurück</button>
                     <div>
-                        <button type="button" onclick="window.print()" class="secondary" style="background-color: #6c757d;">Ausdrucken</button>
-                        <button type="button" onclick="downloadPDF()" style="background-color: var(--success-color);">Als PDF speichern (für E-Mail Support)</button>
+                        <button type="button" onclick="window.print()" class="secondary" style="margin-right: 0.5rem;">Ausdrucken</button>
+                        <button type="button" onclick="downloadPDF()">Als PDF speichern</button>
                     </div>
                 </div>
             </div>
@@ -263,7 +256,7 @@
                 html = `
                     <label>Länge (m):</label><input type="number" id="calcLength" placeholder="z. B. 6">
                     <label>Breite (m):</label><input type="number" id="calcWidth" placeholder="z. B. 3">
-                    <label>Wassertiefe (m) / Bei Schrägboden Durchschnitt:</label><input type="number" id="calcDepth" placeholder="z. B. 1.5">
+                    <label>Wassertiefe (m):</label><input type="number" id="calcDepth" placeholder="z. B. 1.5">
                 `;
             } else if (shape === 'rund') {
                 html = `
@@ -308,7 +301,7 @@
 
             if (volume > 0) {
                 document.getElementById('volume').value = volume.toFixed(2);
-                alert('Berechnetes Volumen: ' + volume.toFixed(2) + ' m³ wurde oben eingetragen!');
+                alert('Berechnetes Volumen: ' + volume.toFixed(2) + ' m³ übernommen!');
             } else {
                 alert('Bitte füllen Sie alle Maße korrekt aus.');
             }
@@ -331,20 +324,16 @@
                     <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
                     <label for="val-salt">Salzgehalt (g/l):</label><input type="number" step="0.1" id="val-salt" placeholder="z. B. 3.0">
                     <label for="val-freechlor">Freies Chlor (mg/l):</label><input type="number" step="0.1" id="val-freechlor" placeholder="z. B. 0.8">
-                    <label for="val-cya">Cyanursäure (mg/l):</label><input type="number" id="val-cya" placeholder="z. B. 15">
                 `;
             } else if (method === 'aktivsauerstoff') {
                 html = `
                     <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
                     <label for="val-oxy">Sauerstoffgehalt (mg/l):</label><input type="number" step="0.1" id="val-oxy" placeholder="z. B. 5.0">
-                    <label for="val-alg">Algizid-Wert / Status:</label><input type="text" id="val-alg" placeholder="z. B. Dosiert / Ausreichend">
                 `;
             } else if (method === 'brom') {
                 html = `
                     <label for="val-ph">pH-Wert:</label><input type="number" step="0.1" id="val-ph" placeholder="z. B. 7.2">
                     <label for="val-brom">Bromwert (mg/l):</label><input type="number" step="0.1" id="val-brom" placeholder="z. B. 2.5">
-                    <label for="val-ta">Gesamtalkalinität (TA-Wert in mg/l):</label><input type="number" id="val-ta" placeholder="z. B. 100">
-                    <label for="val-calcium">Calciumhärte (mg/l):</label><input type="number" id="val-calcium" placeholder="z. B. 200">
                 `;
             }
             container.innerHTML = html;
@@ -390,15 +379,13 @@
             
             let customText = document.getElementById('customProblemText').value.trim();
 
-            // Werte in PDF-Felder einfügen
             document.getElementById('pdf-vol').innerText = volume;
-            document.getElementById('pdf-loc').innerText = location + (environment === 'baeume' ? ' (In der Nähe von Bäumen)' : ' (Freistehend)');
+            document.getElementById('pdf-loc').innerText = location;
             document.getElementById('pdf-filt').innerText = filter;
             document.getElementById('pdf-cov').innerText = cover;
             document.getElementById('pdf-meth').innerText = method.toUpperCase();
             document.getElementById('pdf-ph').innerText = ph;
 
-            // Werte in die direkte Ansicht einfügen
             document.getElementById('res-problem').innerText = problemText;
             
             if (customText) {
@@ -417,7 +404,7 @@
             const element = document.getElementById('pdfContent');
             const opt = {
                 margin:       10,
-                filename:     'Pool-Handlungsempfehlung-Support.pdf',
+                filename:     'PoolHero-Empfehlung.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
